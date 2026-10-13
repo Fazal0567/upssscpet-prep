@@ -1,0 +1,488 @@
+import { Question, SubjectItem } from '../types';
+
+export const INITIAL_SUBJECTS: SubjectItem[] = [
+  {
+    id: 'up_gk',
+    name_en: 'Uttar Pradesh GK',
+    name_hi: 'उत्तर प्रदेश सामान्य ज्ञान',
+    icon: 'MapPin',
+    color: 'from-amber-500 to-orange-600',
+    description: 'Culture, geography, history, districts, rivers, and schemes of Uttar Pradesh.',
+    topics: ['UP Geography & Rivers', 'UP History & Heritage', 'UP Art & Culture', 'UP Agriculture & Economy', 'UP Government Schemes']
+  },
+  {
+    id: 'indian_history',
+    name_en: 'Indian History',
+    name_hi: 'भारतीय इतिहास',
+    icon: 'Landmark',
+    color: 'from-indigo-500 to-blue-700',
+    description: 'Ancient Indus Valley, Vedic Age, Maurya, Gupta dynasty, Delhi Sultanate & Mughals.',
+    topics: ['Indus Valley Civilization', 'Vedic Culture & Buddhism', 'Maurya & Gupta Empire', 'Delhi Sultanate & Mughals', 'Marathas & British Rise']
+  },
+  {
+    id: 'national_movement',
+    name_en: 'National Movement',
+    name_hi: 'भारतीय राष्ट्रीय आंदोलन',
+    icon: 'Flag',
+    color: 'from-emerald-500 to-teal-700',
+    description: '1857 Revolt, Indian National Congress, Gandhian era, revolutionaries & freedom struggle.',
+    topics: ['Revolt of 1857', 'Early Nationalists & INC', 'Swadeshi & Home Rule', 'Gandhian Mass Movements', 'Quit India & INA']
+  },
+  {
+    id: 'geography',
+    name_en: 'Geography',
+    name_hi: 'भूगोल',
+    icon: 'Globe2',
+    color: 'from-cyan-500 to-blue-600',
+    description: 'Indian and world geography, river systems, mountains, climate zones, minerals & time zones.',
+    topics: ['Physiography of India', 'Indian Drainage Systems', 'Climate & Monsoons', 'Soil & Agriculture', 'World Geography & Time Zones']
+  },
+  {
+    id: 'indian_polity',
+    name_en: 'Indian Polity',
+    name_hi: 'भारतीय संविधान एवं लोक प्रशासन',
+    icon: 'Scale',
+    color: 'from-violet-500 to-purple-700',
+    description: 'Constitution features, Fundamental Rights, Directive Principles, Parliament, Judiciary & Panchayats.',
+    topics: ['Constitutional Framing & Preamble', 'Fundamental Rights & Duties', 'Directive Principles (DPSP)', 'Union Parliament & President', 'Panchayati Raj & Local Governance']
+  },
+  {
+    id: 'indian_economy',
+    name_en: 'Indian Economy',
+    name_hi: 'भारतीय अर्थव्यवस्था',
+    icon: 'TrendingUp',
+    color: 'from-emerald-600 to-green-700',
+    description: 'Economic developments (1947–1991), Five Year Plans, Green Revolution, GST & Banking reforms.',
+    topics: ['Five Year Plans & NITI Aayog', 'Green & White Revolutions', 'Banking Sector & RBI', 'Economic Reforms 1991', 'GST & Fiscal Policy']
+  },
+  {
+    id: 'general_science',
+    name_en: 'General Science',
+    name_hi: 'सामान्य विज्ञान',
+    icon: 'Atom',
+    color: 'from-rose-500 to-pink-600',
+    description: 'Fundamental principles of Physics, Chemistry, Human Anatomy, Diseases and Everyday Science.',
+    topics: ['Mechanics & Optics', 'Acids, Bases & Everyday Chemistry', 'Human Biology & Nutrition', 'Diseases & Immunity', 'Vitamins & Minerals']
+  },
+  {
+    id: 'general_awareness',
+    name_en: 'General Awareness',
+    name_hi: 'सामान्य जागरूकता',
+    icon: 'Award',
+    color: 'from-amber-600 to-yellow-600',
+    description: 'Neighboring countries, capitals, currencies, national days, sports, awards & international bodies.',
+    topics: ['India & Neighbors (Capitals/Currencies)', 'States & Union Territories', 'International Organizations & HQs', 'Important National Days', 'Books, Authors & Honors']
+  }
+];
+
+// Default seed questions initialized as empty (no dummy questions)
+export const SEED_QUESTIONS: Question[] = [];
+
+// Optional demo questions if user/admin ever wants to test with sample data
+export const DEMO_SAMPLE_QUESTIONS: Question[] = [
+  // UP GK
+  {
+    id: 'pet_up_01',
+    subject: 'Uttar Pradesh GK',
+    topic: 'UP Geography & Rivers',
+    question_hi: 'उत्तर प्रदेश का कौन सा जिला सर्वाधिक राज्यों की सीमा को स्पर्श करता है?',
+    question_en: 'Which district of Uttar Pradesh touches the boundaries of the maximum number of states?',
+    options_hi: ['सोनभद्र', 'सहारनपुर', 'बलिया', 'ललितपुर'],
+    options_en: ['Sonbhadra', 'Saharanpur', 'Ballia', 'Lalitpur'],
+    correct_option: 0,
+    answer_hi: 'सोनभद्र',
+    answer_en: 'Sonbhadra',
+    explanation_hi: 'सोनभद्र भारत का एकमात्र ऐसा जिला है जिसकी सीमा 4 राज्यों (मध्य प्रदेश, छत्तीसगढ़, झारखंड और बिहार) से लगती है।',
+    explanation_en: 'Sonbhadra is the only district in India whose boundary touches 4 states: Madhya Pradesh, Chhattisgarh, Jharkhand, and Bihar.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_up_02',
+    subject: 'Uttar Pradesh GK',
+    topic: 'UP Art & Culture',
+    question_hi: 'उत्तर प्रदेश का एकमात्र शास्त्रीय नृत्य कौन सा है?',
+    question_en: 'Which is the only classical dance form of Uttar Pradesh?',
+    options_hi: ['कथक', 'कथकली', 'भरतनाट्यम', 'कुचिपुड़ी'],
+    options_en: ['Kathak', 'Kathakali', 'Bharatanatyam', 'Kuchipudi'],
+    correct_option: 0,
+    answer_hi: 'कथक',
+    answer_en: 'Kathak',
+    explanation_hi: 'कथक उत्तर प्रदेश का प्रसिद्ध शास्त्रीय नृत्य है जिसका विकास लखनऊ घराने और अवध के नवाब वाजिद अली शाह के समय में अत्यधिक हुआ।',
+    explanation_en: 'Kathak is the premier classical dance form originating from Uttar Pradesh, deeply nurtured in the Lucknow Gharana under Nawab Wajid Ali Shah.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_up_03',
+    subject: 'Uttar Pradesh GK',
+    topic: 'UP Agriculture & Economy',
+    question_hi: 'उत्तर प्रदेश में दुधवा राष्ट्रीय उद्यान किस जिले में स्थित है?',
+    question_en: 'In which district of Uttar Pradesh is Dudhwa National Park located?',
+    options_hi: ['लखीमपुर खीरी', 'पीलीभीत', 'बहराइच', 'श्रावस्ती'],
+    options_en: ['Lakhimpur Kheri', 'Pilibhit', 'Bahraich', 'Shravasti'],
+    correct_option: 0,
+    answer_hi: 'लखीमपुर खीरी',
+    answer_en: 'Lakhimpur Kheri',
+    explanation_hi: 'दुधवा राष्ट्रीय उद्यान लखीमपुर खीरी जिले में स्थित है और यह भारत-नेपाल सीमा के तराई क्षेत्र में 1977 में स्थापित किया गया था।',
+    explanation_en: 'Dudhwa National Park is situated in the Lakhimpur Kheri district along the Indo-Nepal border in the Terai belt, established in 1977.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'pet_up_04',
+    subject: 'Uttar Pradesh GK',
+    topic: 'UP History & Heritage',
+    question_hi: 'भगवान बुद्ध ने अपना पहला धर्मोपदेश (धर्मचक्रप्रवर्तन) उत्तर प्रदेश के किस स्थान पर दिया था?',
+    question_en: 'At which place in Uttar Pradesh did Lord Buddha deliver his first sermon (Dharmachakrapravartana)?',
+    options_hi: ['सारनाथ', 'कुशीनगर', 'श्रावस्ती', 'कौशांबी'],
+    options_en: ['Sarnath', 'Kushinagar', 'Shravasti', 'Kaushambi'],
+    correct_option: 0,
+    answer_hi: 'सारनाथ',
+    answer_en: 'Sarnath',
+    explanation_hi: 'भगवान बुद्ध ने ज्ञान प्राप्ति के उपरांत वाराणसी के निकट सारनाथ (ऋषिपत्तन) के हिरण्य वन में अपने 5 शिष्यों को प्रथम उपदेश दिया।',
+    explanation_en: 'Lord Buddha delivered his first sermon to his five disciples at Sarnath near Varanasi, an event commemorated as Dharmachakrapravartana.',
+    difficulty: 'easy'
+  },
+
+  // Indian History
+  {
+    id: 'pet_hist_01',
+    subject: 'Indian History',
+    topic: 'Indus Valley Civilization',
+    question_hi: 'सिंधु घाटी सभ्यता का प्रसिद्ध बंदरगाह नगर कौन सा था?',
+    question_en: 'Which was the prominent dockyard/port city of the Indus Valley Civilization?',
+    options_hi: ['लोथल', 'कालीबंगा', 'मोहनजोदड़ो', 'हड़प्पा'],
+    options_en: ['Lothal', 'Kalibangan', 'Mohenjo-daro', 'Harappa'],
+    correct_option: 0,
+    answer_hi: 'लोथल',
+    answer_en: 'Lothal',
+    explanation_hi: 'लोथल गुजरात के भाल क्षेत्र में भोगवा नदी के तट पर स्थित हड़प्पा सभ्यता का एक प्रमुख बंदरगाह नगर था जहाँ गोदीबाड़ा (Dockyard) के साक्ष्य मिले हैं।',
+    explanation_en: 'Lothal located on the banks of river Bhogava in Gujarat was the famous tidal dockyard and maritime trade hub of the Harappan civilization.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_hist_02',
+    subject: 'Indian History',
+    topic: 'Maurya & Gupta Empire',
+    question_hi: 'मौर्य साम्राज्य में "अर्थशास्त्र" नामक ग्रंथ की रचना किसने की थी?',
+    question_en: 'Who authored the ancient Indian political treatise "Arthashastra" during the Maurya period?',
+    options_hi: ['कौटिल्य (चाणक्य)', 'मेगस्थनीज', 'बाणभट्ट', 'विशाखदत्त'],
+    options_en: ['Kautilya (Chanakya)', 'Megasthenes', 'Banabhatta', 'Vishakhadatta'],
+    correct_option: 0,
+    answer_hi: 'कौटिल्य (चाणक्य)',
+    answer_en: 'Kautilya (Chanakya)',
+    explanation_hi: 'कौटिल्य (चाणक्य/विष्णुगुप्त) चंद्रगुप्त मौर्य के प्रधानमंत्री और गुरु थे जिन्होंने राजनीति एवं शासनकला पर कालजयी ग्रंथ "अर्थशास्त्र" की रचना की।',
+    explanation_en: 'Kautilya (Chanakya/Vishnugupta) was the prime minister and mentor of Chandragupta Maurya who penned the Arthashastra on statecraft and economic policy.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_hist_03',
+    subject: 'Indian History',
+    topic: 'Vedic Culture & Buddhism',
+    question_hi: 'तृतीय बौद्ध संगीति किसके शासनकाल में पाटलिपुत्र में आयोजित की गई थी?',
+    question_en: 'Under whose patronage was the Third Buddhist Council convened at Pataliputra?',
+    options_hi: ['सम्राट अशोक', 'कनिष्क', 'अजातशत्रु', 'कालाशोक'],
+    options_en: ['Emperor Ashoka', 'Kanishka', 'Ajatashatru', 'Kalashoka'],
+    correct_option: 0,
+    answer_hi: 'सम्राट अशोक',
+    answer_en: 'Emperor Ashoka',
+    explanation_hi: 'तृतीय बौद्ध संगीति 250 ई.पू. में मौर्य सम्राट अशोक के काल में पाटलिपुत्र में मोग्गलिपुत्त तिस्स की अध्यक्षता में संपन्न हुई थी।',
+    explanation_en: 'The Third Buddhist Council was held around 250 BCE at Pataliputra under the patronage of Mauryan Emperor Ashoka, presided over by Moggaliputta Tissa.',
+    difficulty: 'medium'
+  },
+
+  // National Movement
+  {
+    id: 'pet_nm_01',
+    subject: 'National Movement',
+    topic: 'Revolt of 1857',
+    question_hi: '1857 के प्रथम स्वतंत्रता संग्राम की शुरुआत 10 मई को किस छावनी से हुई थी?',
+    question_en: 'From which cantonment did the First War of Indian Independence break out on 10th May 1857?',
+    options_hi: ['मेरठ', 'बैरकपुर', 'झांसी', 'कानपुर'],
+    options_en: ['Meerut', 'Barrackpore', 'Jhansi', 'Kanpur'],
+    correct_option: 0,
+    answer_hi: 'मेरठ',
+    answer_en: 'Meerut',
+    explanation_hi: '1857 का महासंग्राम औपचारिक रूप से 10 मई 1857 को मेरठ छावनी की तीसरी देशी घुड़सवार सेना के सैनिकों द्वारा विद्रोह के साथ शुरू हुआ।',
+    explanation_en: 'The widespread outbreak began formally on 10 May 1857 in Meerut cantonment when sepoys of the 3rd Native Cavalry mutinied and marched to Delhi.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_nm_02',
+    subject: 'National Movement',
+    topic: 'Gandhian Mass Movements',
+    question_hi: 'गांधीजी ने 1930 में "दांडी मार्च" किस कानून के विरोध में शुरू किया था?',
+    question_en: 'Against which colonial law did Mahatma Gandhi launch the historic "Dandi March" in 1930?',
+    options_hi: ['नमक कर कानून', 'रौलट एक्ट', 'प्रेस प्रतिबंध अधिनियम', 'भू-राजस्व व्यवस्था'],
+    options_en: ['Salt Tax Act', 'Rowlatt Act', 'Vernacular Press Act', 'Land Revenue Settlement'],
+    correct_option: 0,
+    answer_hi: 'नमक कर कानून',
+    answer_en: 'Salt Tax Act',
+    explanation_hi: '12 मार्च 1930 को साबरमती आश्रम से दांडी तक 24 दिनों की यात्रा कर 6 अप्रैल 1930 को गांधीजी ने नमक बनाकर सविनय अवज्ञा आंदोलन आरंभ किया।',
+    explanation_en: 'Gandhi ji walked 240 miles from Sabarmati to Dandi between 12 March and 6 April 1930, violating the British salt monopoly to inaugurate Civil Disobedience.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_nm_03',
+    subject: 'National Movement',
+    topic: 'Quit India & INA',
+    question_hi: '1942 के भारत छोड़ो आंदोलन के दौरान महात्मा गांधी ने कौन सा ऐतिहासिक नारा दिया था?',
+    question_en: 'Which clarion slogan was coined by Mahatma Gandhi during the Quit India Movement in 1942?',
+    options_hi: ['करो या मरो (Do or Die)', 'जय हिंद', 'तुम मुझे खून दो मैं तुम्हें आजादी दूंगा', 'स्वराज मेरा जन्मसिद्ध अधिकार है'],
+    options_en: ['Do or Die (Karo ya Maro)', 'Jai Hind', 'Give me blood and I will give you freedom', 'Swaraj is my birthright'],
+    correct_option: 0,
+    answer_hi: 'करो या मरो (Do or Die)',
+    answer_en: 'Do or Die (Karo ya Maro)',
+    explanation_hi: '8 अगस्त 1942 को बॉम्बे के गोवालिया टैंक मैदान में अखिल भारतीय कांग्रेस समिति में गांधीजी ने "करो या मरो" का प्रसिद्ध नारा दिया।',
+    explanation_en: 'At the Gowalia Tank Maidan in Bombay on 8 August 1942, Gandhi delivered his passionate "Do or Die" speech rallying the entire country.',
+    difficulty: 'easy'
+  },
+
+  // Geography
+  {
+    id: 'pet_geo_01',
+    subject: 'Geography',
+    topic: 'Indian Drainage Systems',
+    question_hi: 'भारत की सबसे लंबी नदी कौन सी है?',
+    question_en: 'Which is the longest river flowing entirely through and originating in India?',
+    options_hi: ['गंगा (2,525 किमी)', 'गोदावरी (1,465 किमी)', 'ब्रह्मपुत्र', 'यमुना'],
+    options_en: ['Ganga (2,525 km)', 'Godavari (1,465 km)', 'Brahmaputra', 'Yamuna'],
+    correct_option: 0,
+    answer_hi: 'गंगा',
+    answer_en: 'Ganga',
+    explanation_hi: 'गंगा नदी भारत की सबसे पवित्र और सबसे लंबी नदी (2525 किमी) है, जिसका उद्गम उत्तराखंड में गंगोत्री हिमनद (भागीरथी) से होता है।',
+    explanation_en: 'The Ganga is the longest river in India spanning 2,525 km from Gangotri glacier in Uttarakhand to the Bay of Bengal.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_geo_02',
+    subject: 'Geography',
+    topic: 'World Geography & Time Zones',
+    question_hi: 'भारतीय मानक समय (IST) ग्रीनविच माध्य समय (GMT) से कितने घंटे आगे है?',
+    question_en: 'By how much time is Indian Standard Time (IST) ahead of Greenwich Mean Time (GMT)?',
+    options_hi: ['5 घंटे 30 मिनट आगे', '4 घंटे 30 मिनट आगे', '6 घंटे आगे', '5 घंटे पीछे'],
+    options_en: ['5 hours 30 minutes ahead', '4 hours 30 minutes ahead', '6 hours ahead', '5 hours behind'],
+    correct_option: 0,
+    answer_hi: '5 घंटे 30 मिनट आगे',
+    answer_en: '5 hours 30 minutes ahead',
+    explanation_hi: 'भारतीय मानक समय 82.5° पूर्व देशांतर (मिर्जापुर/प्रयागराज, उत्तर प्रदेश) से निर्धारित होता है, जो GMT से 5 घंटे 30 मिनट आगे है।',
+    explanation_en: 'Indian Standard Time is calculated on the 82.5° E meridian passing near Mirzapur/Prayagraj in UP, which is +5:30 hrs ahead of UTC/GMT.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_geo_03',
+    subject: 'Geography',
+    topic: 'Physiography of India',
+    question_hi: 'प्रायद्वीपीय भारत (दक्षिण भारत) की सबसे ऊंची पर्वत चोटी कौन सी है?',
+    question_en: 'Which is the highest mountain peak of Peninsular / South India?',
+    options_hi: ['अनाईमुडी (2,695 मी)', 'दोदाबेटा (2,637 मी)', 'महेंद्रगिरि', 'धूपगढ़'],
+    options_en: ['Anaimudi (2,695 m)', 'Doddabetta (2,637 m)', 'Mahendragiri', 'Dhupgarh'],
+    correct_option: 0,
+    answer_hi: 'अनाईमुडी',
+    answer_en: 'Anaimudi',
+    explanation_hi: 'अनाईमुडी (केरल के इडुक्की जिले में अन्नामलाई पहाड़ियों में स्थित) 2,695 मीटर की ऊंचाई के साथ दक्षिण भारत की सर्वोच्च चोटी है।',
+    explanation_en: 'Anaimudi located in the Annamalai Hills of Western Ghats in Kerala (elevation 2,695 m) is the highest peak in Peninsular India.',
+    difficulty: 'medium'
+  },
+
+  // Indian Polity
+  {
+    id: 'pet_pol_01',
+    subject: 'Indian Polity',
+    topic: 'Fundamental Rights & Duties',
+    question_hi: 'भारतीय संविधान में "मौलिक अधिकार" किस देश के संविधान से प्रेरित होकर शामिल किए गए हैं?',
+    question_en: 'From which country\'s constitution were "Fundamental Rights" in the Indian Constitution borrowed?',
+    options_hi: ['संयुक्त राज्य अमेरिका (USA)', 'यूनाइटेड किंगडम (ब्रिटेन)', 'आयरलैंड', 'रूस (पूर्व सोवियत संघ)'],
+    options_en: ['United States of America (USA)', 'United Kingdom (UK)', 'Ireland', 'Russia (former USSR)'],
+    correct_option: 0,
+    answer_hi: 'संयुक्त राज्य अमेरिका (USA)',
+    answer_en: 'United States of America (USA)',
+    explanation_hi: 'संविधान के भाग-3 (अनुच्छेद 12 से 35) में निहित मौलिक अधिकार अमेरिकी संविधान के "बिल ऑफ राइट्स" से प्रेरित हैं।',
+    explanation_en: 'Part III of the Indian Constitution (Articles 12 to 35) enshrining Fundamental Rights is inspired by the US Bill of Rights.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_pol_02',
+    subject: 'Indian Polity',
+    topic: 'Directive Principles (DPSP)',
+    question_hi: 'राज्य के नीति-निर्देशक तत्व (DPSP) संविधान के किस भाग में वर्णित हैं?',
+    question_en: 'In which Part of the Indian Constitution are the Directive Principles of State Policy (DPSP) described?',
+    options_hi: ['भाग IV (अनुच्छेद 36-51)', 'भाग III (अनुच्छेद 12-35)', 'भाग II (अनुच्छेद 5-11)', 'भाग IVA (अनुच्छेद 51A)'],
+    options_en: ['Part IV (Articles 36-51)', 'Part III (Articles 12-35)', 'Part II (Articles 5-11)', 'Part IVA (Article 51A)'],
+    correct_option: 0,
+    answer_hi: 'भाग IV (अनुच्छेद 36-51)',
+    answer_en: 'Part IV (Articles 36-51)',
+    explanation_hi: 'नीति-निर्देशक सिद्धांत आयरलैंड के संविधान से लिए गए हैं और ये संविधान के भाग-4 (अनुच्छेद 36 से 51) में दिए गए हैं।',
+    explanation_en: 'Directive Principles were adopted from the Irish Constitution and are enshrined in Part IV (Articles 36 to 51) to ensure a welfare state.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_pol_03',
+    subject: 'Indian Polity',
+    topic: 'Panchayati Raj & Local Governance',
+    question_hi: 'पंचायती राज संस्थाओं को 73वें संविधान संशोधन (1992) द्वारा किस अनुसूची में जोड़ा गया?',
+    question_en: 'Under which Schedule were Panchayati Raj institutions inserted via the 73rd Constitutional Amendment Act, 1992?',
+    options_hi: ['11वीं अनुसूची (29 विषय)', '12वीं अनुसूची (18 विषय)', '10वीं अनुसूची', '8वीं अनुसूची'],
+    options_en: ['11th Schedule (29 subjects)', '12th Schedule (18 subjects)', '10th Schedule', '8th Schedule'],
+    correct_option: 0,
+    answer_hi: '11वीं अनुसूची',
+    answer_en: '11th Schedule',
+    explanation_hi: '73वें संविधान संशोधन 1992 के जरिए 11वीं अनुसूची जोड़ी गई जिसमें पंचायतों के कार्यक्षेत्र के 29 विषय शामिल हैं।',
+    explanation_en: 'The 73rd Amendment inserted the 11th Schedule specifying 29 functional items for Panchayats under Article 243G.',
+    difficulty: 'medium'
+  },
+
+  // Indian Economy
+  {
+    id: 'pet_eco_01',
+    subject: 'Indian Economy',
+    topic: 'Five Year Plans & NITI Aayog',
+    question_hi: 'भारत में योजना आयोग के स्थान पर "नीति आयोग" (NITI Aayog) का गठन किस वर्ष किया गया था?',
+    question_en: 'In which year was NITI Aayog constituted to replace the erstwhile Planning Commission of India?',
+    options_hi: ['1 जनवरी 2015', '15 अगस्त 2014', '1 अप्रैल 2016', '26 जनवरी 2015'],
+    options_en: ['1 January 2015', '15 August 2014', '1 April 2016', '26 January 2015'],
+    correct_option: 0,
+    answer_hi: '1 जनवरी 2015',
+    answer_en: '1 January 2015',
+    explanation_hi: 'राष्ट्रीय भारत परिवर्तन संस्थान (NITI Aayog) की स्थापना 1 जनवरी 2015 को हुई। प्रधानमंत्री इसके पदेन अध्यक्ष होते हैं।',
+    explanation_en: 'National Institution for Transforming India (NITI Aayog) was set up on 1 January 2015 with the Prime Minister as its ex-officio Chairperson.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_eco_02',
+    subject: 'Indian Economy',
+    topic: 'Green & White Revolutions',
+    question_hi: 'भारत में "हरित क्रांति" (Green Revolution) का जनक किसे माना जाता है?',
+    question_en: 'Who is revered as the "Father of the Green Revolution in India"?',
+    options_hi: ['डॉ. एम. एस. स्वामीनाथन', 'डॉ. वर्गीज कुरियन', 'नॉर्मन बोरलॉग', 'प्रो. अमर्त्य सेन'],
+    options_en: ['Dr. M. S. Swaminathan', 'Dr. Verghese Kurien', 'Norman Borlaug', 'Prof. Amartya Sen'],
+    correct_option: 0,
+    answer_hi: 'डॉ. एम. एस. स्वामीनाथन',
+    answer_en: 'Dr. M. S. Swaminathan',
+    explanation_hi: 'भारत में 1960 के दशक में उच्च उपज वाली किस्मों (HYV) के बीजों द्वारा खाद्यान्न उत्पादन बढ़ाने का श्रेय डॉ. एम.एस. स्वामीनाथन को जाता है।',
+    explanation_en: 'Dr. M.S. Swaminathan pioneered the introduction of high-yielding semi-dwarf wheat and rice varieties in India in the late 1960s.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_eco_03',
+    subject: 'Indian Economy',
+    topic: 'GST & Fiscal Policy',
+    question_hi: 'भारत में वस्तु एवं सेवा कर (GST) किस तिथि से प्रभावी हुआ था?',
+    question_en: 'From which date did the Goods and Services Tax (GST) come into effect in India?',
+    options_hi: ['1 जुलाई 2017', '1 अप्रैल 2017', '8 नवंबर 2016', '1 जनवरी 2018'],
+    options_en: ['1 July 2017', '1 April 2017', '8 November 2016', '1 January 2018'],
+    correct_option: 0,
+    answer_hi: '1 जुलाई 2017',
+    answer_en: '1 July 2017',
+    explanation_hi: '101वें संविधान संशोधन अधिनियम द्वारा 1 जुलाई 2017 को पूरे देश में एकल अप्रत्यक्ष कर प्रणाली "एक राष्ट्र, एक कर" के रूप में GST लागू हुआ।',
+    explanation_en: 'Enacted by the 101st Constitutional Amendment, GST replaced multiple indirect cascading taxes across India on 1 July 2017.',
+    difficulty: 'easy'
+  },
+
+  // General Science
+  {
+    id: 'pet_sci_01',
+    subject: 'General Science',
+    topic: 'Human Biology & Nutrition',
+    question_hi: 'मानव शरीर में रक्त का थक्का (Blood Clotting) जमने में कौन सा विटामिन सहायक होता है?',
+    question_en: 'Which vitamin is essential for blood coagulation (clotting) in the human body?',
+    options_hi: ['विटामिन K', 'विटामिन C', 'विटामिन D', 'विटामिन A'],
+    options_en: ['Vitamin K', 'Vitamin C', 'Vitamin D', 'Vitamin A'],
+    correct_option: 0,
+    answer_hi: 'विटामिन K',
+    answer_en: 'Vitamin K',
+    explanation_hi: 'विटामिन K यकृत में प्रोथ्रोम्बिन और फाइब्रिनोजेन जैसे रक्त का थक्का बनाने वाले कारकों के संश्लेषण के लिए अनिवार्य है।',
+    explanation_en: 'Vitamin K (Phylloquinone) is a fat-soluble vitamin required by the liver for the synthesis of prothrombin and blood clotting factors.',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_sci_02',
+    subject: 'General Science',
+    topic: 'Mechanics & Optics',
+    question_hi: 'प्रकाश वर्ष (Light Year) निम्नलिखित में से किसकी इकाई है?',
+    question_en: 'Light Year is a unit of measurement for which physical quantity?',
+    options_hi: ['खगोलीय दूरी (Astronomical Distance)', 'समय (Time)', 'प्रकाश की तीव्रता (Intensity of Light)', 'गति (Speed)'],
+    options_en: ['Astronomical Distance', 'Time', 'Intensity of Light', 'Velocity'],
+    correct_option: 0,
+    answer_hi: 'खगोलीय दूरी',
+    answer_en: 'Astronomical Distance',
+    explanation_hi: 'प्रकाश द्वारा एक वर्ष में निर्वात में तय की गई दूरी को प्रकाश वर्ष कहते हैं (लगभग 9.46 × 10¹² किलोमीटर)।',
+    explanation_en: 'A light-year is the distance that light travels through vacuum in one Julian year (approx 9.46 trillion kilometres).',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_sci_03',
+    subject: 'General Science',
+    topic: 'Acids, Bases & Everyday Chemistry',
+    question_hi: 'शुद्ध जल का pH मान 25°C पर कितना होता है?',
+    question_en: 'What is the pH value of pure neutral water at 25°C?',
+    options_hi: ['7 (उदासीन)', '0 (अम्लीय)', '14 (क्षारीय)', '4 (दुर्बल अम्ल)'],
+    options_en: ['7 (Neutral)', '0 (Acidic)', '14 (Basic)', '4 (Weak acid)'],
+    correct_option: 0,
+    answer_hi: '7',
+    answer_en: '7',
+    explanation_hi: '25°C पर शुद्ध आसुत जल में H+ और OH- आयनों की सांद्रता बराबर (10⁻⁷ M) होती है, अतः इसका pH मान ठीक 7 (उदासीन) होता है।',
+    explanation_en: 'At 25°C, equal concentrations of hydronium and hydroxide ions yield a neutral pH of precisely 7.',
+    difficulty: 'easy'
+  },
+
+  // General Awareness
+  {
+    id: 'pet_ga_01',
+    subject: 'General Awareness',
+    topic: 'India & Neighbors (Capitals/Currencies)',
+    question_hi: 'बांग्लादेश की आधिकारिक मुद्रा (Currency) क्या है?',
+    question_en: 'What is the official currency of Bangladesh?',
+    options_hi: ['टका (Taka)', 'रुपया (Rupee)', 'क्याट (Kyat)', 'गुलट्रम (Ngultrum)'],
+    options_en: ['Taka', 'Rupee', 'Kyat', 'Ngultrum'],
+    correct_option: 0,
+    answer_hi: 'टका (Taka)',
+    answer_en: 'Taka',
+    explanation_hi: 'बांग्लादेश की राजधानी ढाका है और इसकी राष्ट्रीय मुद्रा "टका" (BDT) है।',
+    explanation_en: 'The capital of Bangladesh is Dhaka and its official national currency is the Bangladeshi Taka (BDT).',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_ga_02',
+    subject: 'General Awareness',
+    topic: 'Important National Days',
+    question_hi: 'प्रत्येक वर्ष भारत में "राष्ट्रीय मतदाता दिवस" (National Voters\' Day) कब मनाया जाता है?',
+    question_en: 'On which date is "National Voters\' Day" celebrated every year across India?',
+    options_hi: ['25 जनवरी', '26 जनवरी', '28 फरवरी', '10 दिसंबर'],
+    options_en: ['25 January', '26 January', '28 February', '10 December'],
+    correct_option: 0,
+    answer_hi: '25 जनवरी',
+    answer_en: '25 January',
+    explanation_hi: '25 जनवरी 1950 को भारत निर्वाचन आयोग (ECI) की स्थापना के उपलक्ष्य में वर्ष 2011 से हर साल 25 जनवरी को राष्ट्रीय मतदाता दिवस मनाया जाता है।',
+    explanation_en: 'Celebrated since 2011 to mark the foundation day of the Election Commission of India (established on 25 January 1950).',
+    difficulty: 'easy'
+  },
+  {
+    id: 'pet_ga_03',
+    subject: 'General Awareness',
+    topic: 'International Organizations & HQs',
+    question_hi: 'संयुक्त राष्ट्र शैक्षिक, वैज्ञानिक तथा सांस्कृतिक संगठन (यूनेस्को - UNESCO) का मुख्यालय कहाँ स्थित है?',
+    question_en: 'Where is the global headquarters of UNESCO located?',
+    options_hi: ['पेरिस, फ्रांस', 'जिनेवा, स्विट्जरलैंड', 'न्यूयॉर्क, अमेरिका', 'वियना, ऑस्ट्रिया'],
+    options_en: ['Paris, France', 'Geneva, Switzerland', 'New York, USA', 'Vienna, Austria'],
+    correct_option: 0,
+    answer_hi: 'पेरिस, फ्रांस',
+    answer_en: 'Paris, France',
+    explanation_hi: 'यूनेस्को (UNESCO) का मुख्यालय फ्रांस की राजधानी पेरिस में स्थित है। इसकी स्थापना 16 नवंबर 1945 को हुई थी।',
+    explanation_en: 'UNESCO was founded in November 1945 with its world headquarters located at Place de Fontenoy in Paris, France.',
+    difficulty: 'medium'
+  },
+  {
+    id: 'pet_ga_04',
+    subject: 'General Awareness',
+    topic: 'States & Union Territories',
+    question_hi: 'भारत का कौन सा राज्य तीन ओर से बांग्लादेश की अंतरराष्ट्रीय सीमा से घिरा हुआ है?',
+    question_en: 'Which Indian state is surrounded by Bangladesh on three sides?',
+    options_hi: ['त्रिपुरा', 'मेघालय', 'मिजोरम', 'असम'],
+    options_en: ['Tripura', 'Meghalaya', 'Mizoram', 'Assam'],
+    correct_option: 0,
+    answer_hi: 'त्रिपुरा',
+    answer_en: 'Tripura',
+    explanation_hi: 'त्रिपुरा उत्तर, दक्षिण और पश्चिम तीनों दिशाओं से बांग्लादेश की सीमा से घिरा हुआ है।',
+    explanation_en: 'Tripura is bordered by Bangladesh on its north, south, and west sides (comprising 856 km of international border).',
+    difficulty: 'easy'
+  }
+];

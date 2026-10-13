@@ -1,0 +1,6 @@
+{
+  "name": "PET Prep – Smart Exam Practice",
+  "description": "Comprehensive UPSSSC PET exam preparation platform with bilingual question bank, MCQ practice, mock tests, flashcards, progress tracking, and admin JSON management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

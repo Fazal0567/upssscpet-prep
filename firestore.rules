@@ -1,0 +1,89 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'mohdfazalali1@gmail.com'
+      );
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Questions collection
+    match /questions/{questionId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin() && isValidId(questionId);
+    }
+
+    // Subjects collection
+    match /subjects/{subjectId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin() && isValidId(subjectId);
+    }
+
+    // Admins registry
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() && isValidId(adminId);
+    }
+
+    // Import history logs
+    match /import_history/{importId} {
+      allow read, write: if isAdmin() && isValidId(importId);
+    }
+
+    // User profile and subcollections
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId) || isAdmin();
+
+      match /profile/{profileId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId) || isAdmin();
+      }
+
+      match /progress/{progressId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId) || isAdmin();
+      }
+
+      match /attempts/{attemptId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId) && isValidId(attemptId);
+      }
+
+      match /quizzes/{quizId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId) && isValidId(quizId);
+      }
+
+      match /bookmarks/{bookmarkId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId) && isValidId(bookmarkId);
+      }
+
+      match /flashcards/{flashcardId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId) && isValidId(flashcardId);
+      }
+    }
+  }
+}

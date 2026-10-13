@@ -1,0 +1,196 @@
+{
+  "entities": {
+    "Question": {
+      "title": "Question",
+      "description": "An exam question for UPSSSC PET",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "subject": { "type": "string", "maxLength": 128 },
+        "topic": { "type": "string", "maxLength": 128 },
+        "question_hi": { "type": "string", "maxLength": 2048 },
+        "question_en": { "type": "string", "maxLength": 2048 },
+        "options_hi": { "type": "array", "description": "Hindi options list" },
+        "options_en": { "type": "array", "description": "English options list" },
+        "correct_option": { "type": "number", "description": "0-based index of correct option" },
+        "answer_hi": { "type": "string", "maxLength": 1024 },
+        "answer_en": { "type": "string", "maxLength": 1024 },
+        "explanation_hi": { "type": "string", "maxLength": 4096 },
+        "explanation_en": { "type": "string", "maxLength": 4096 },
+        "difficulty": { "type": "string", "enum": ["easy", "medium", "hard"] },
+        "createdAt": { "type": "string" },
+        "createdBy": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "subject", "topic", "correct_option", "difficulty"]
+    },
+    "Subject": {
+      "title": "Subject",
+      "description": "A subject syllabus category for UPSSSC PET",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "name_en": { "type": "string", "maxLength": 128 },
+        "name_hi": { "type": "string", "maxLength": 128 },
+        "icon": { "type": "string", "maxLength": 64 },
+        "color": { "type": "string", "maxLength": 32 },
+        "description": { "type": "string", "maxLength": 512 },
+        "topics": { "type": "array", "description": "List of syllabus topics" }
+      },
+      "required": ["id", "name_en", "name_hi"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with role and stats",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "createdAt": { "type": "string" },
+        "lastLoginAt": { "type": "string" }
+      },
+      "required": ["userId", "email", "role"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Designation of admin UID",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "assignedAt": { "type": "string" }
+      },
+      "required": ["userId", "email"]
+    },
+    "UserProgress": {
+      "title": "UserProgress",
+      "description": "User test attempts, bookmarks, quiz results",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "attemptedCount": { "type": "number" },
+        "correctCount": { "type": "number" },
+        "incorrectCount": { "type": "number" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId"]
+    },
+    "UserAttempt": {
+      "title": "UserAttempt",
+      "description": "Individual question attempt by user",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "questionId": { "type": "string", "maxLength": 128 },
+        "selectedOption": { "type": "number" },
+        "isCorrect": { "type": "boolean" },
+        "subject": { "type": "string", "maxLength": 128 },
+        "topic": { "type": "string", "maxLength": 128 },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "userId", "questionId", "isCorrect"]
+    },
+    "QuizResult": {
+      "title": "QuizResult",
+      "description": "Result record of completed quiz or mock test",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 256 },
+        "totalQuestions": { "type": "number" },
+        "score": { "type": "number" },
+        "correctCount": { "type": "number" },
+        "incorrectCount": { "type": "number" },
+        "skippedCount": { "type": "number" },
+        "timeSpentSeconds": { "type": "number" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "userId", "totalQuestions", "score", "correctCount"]
+    },
+    "Bookmark": {
+      "title": "Bookmark",
+      "description": "User bookmarked question",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "questionId": { "type": "string", "maxLength": 128 },
+        "addedAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "questionId"]
+    },
+    "FlashcardReview": {
+      "title": "FlashcardReview",
+      "description": "User rating on a flashcard",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "questionId": { "type": "string", "maxLength": 128 },
+        "rating": { "type": "string", "enum": ["easy", "medium", "hard"] },
+        "reviewedAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "questionId", "rating"]
+    },
+    "ImportHistory": {
+      "title": "ImportHistory",
+      "description": "History log of question batch imports",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "fileName": { "type": "string", "maxLength": 256 },
+        "totalQuestions": { "type": "number" },
+        "validCount": { "type": "number" },
+        "invalidCount": { "type": "number" },
+        "importedAt": { "type": "string" },
+        "importedBy": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "fileName", "totalQuestions", "validCount", "importedAt"]
+    }
+  },
+  "firestore": {
+    "/questions/{questionId}": {
+      "schema": { "$ref": "#/entities/Question" },
+      "description": "Global questions bank for UPSSSC PET"
+    },
+    "/subjects/{subjectId}": {
+      "schema": { "$ref": "#/entities/Subject" },
+      "description": "Curated UPSSSC PET subjects and syllabus structure"
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/Admin" },
+      "description": "Trusted admin whitelist records"
+    },
+    "/import_history/{importId}": {
+      "schema": { "$ref": "#/entities/ImportHistory" },
+      "description": "Question import logs accessible by admins"
+    },
+    "/users/{userId}/profile": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profile with role"
+    },
+    "/users/{userId}/progress": {
+      "schema": { "$ref": "#/entities/UserProgress" },
+      "description": "Aggregated user stats"
+    },
+    "/users/{userId}/attempts/{attemptId}": {
+      "schema": { "$ref": "#/entities/UserAttempt" },
+      "description": "User practice answer attempts"
+    },
+    "/users/{userId}/quizzes/{quizId}": {
+      "schema": { "$ref": "#/entities/QuizResult" },
+      "description": "Completed quiz and mock test results"
+    },
+    "/users/{userId}/bookmarks/{bookmarkId}": {
+      "schema": { "$ref": "#/entities/Bookmark" },
+      "description": "Bookmarked questions for rapid revision"
+    },
+    "/users/{userId}/flashcards/{flashcardId}": {
+      "schema": { "$ref": "#/entities/FlashcardReview" },
+      "description": "Spaced repetition ratings for flashcard study"
+    }
+  }
+}
