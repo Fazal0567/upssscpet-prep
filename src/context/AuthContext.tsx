@@ -14,6 +14,7 @@ import { checkIsAdmin } from '../firebase/service';
 import { UserProfile, AppLanguage } from '../types';
 
 export const ADMIN_EMAIL = 'mohdfazalali1@gmail.com';
+export const ADMIN_EMAILS = ['mohdfazalali1@gmail.com', 'fazalalicontribute@gmail.com'];
 export const MASTER_ADMIN_KEY = 'PET-ADMIN-2026';
 
 interface AuthContextType {
@@ -135,7 +136,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        const isEmailAdmin = !!currentUser.email && currentUser.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+        const isEmailAdmin = !!currentUser.email && ADMIN_EMAILS.includes(currentUser.email.toLowerCase());
         const isDbAdmin = await checkIsAdmin(currentUser.uid, currentUser.email);
         const resolvedAdmin = isEmailAdmin || isDbAdmin || adminUnlockedWithKey;
 
@@ -210,7 +211,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const lockAdmin = () => {
     sessionStorage.removeItem('pet_admin_unlocked');
     setAdminUnlockedWithKey(false);
-    if (!user || (user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase())) {
+    if (!user || (!user.email || !ADMIN_EMAILS.includes(user.email.toLowerCase()))) {
       setIsAdmin(false);
       if (profile) {
         setProfile({
@@ -244,7 +245,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const cred = await signInWithPopup(auth, googleProvider);
     const userEmail = cred.user.email?.toLowerCase() || '';
     const isDbAdmin = await checkIsAdmin(cred.user.uid, userEmail);
-    const isAuthorized = userEmail === ADMIN_EMAIL.toLowerCase() || isDbAdmin;
+    const isAuthorized = ADMIN_EMAILS.includes(userEmail) || isDbAdmin;
 
     if (!isAuthorized) {
       // Immediately sign out unauthorized user
@@ -261,7 +262,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Dedicated Admin Email & Password Sign-In with strict email verification
   const loginAdminWithEmail = async (email: string, pass: string) => {
     const trimmedEmail = email.trim().toLowerCase();
-    if (trimmedEmail !== ADMIN_EMAIL.toLowerCase()) {
+    if (!ADMIN_EMAILS.includes(trimmedEmail)) {
       throw new Error(
         'Invalid Admin Email: Only the authorized administrator is permitted.'
       );
@@ -270,7 +271,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const cred = await signInWithEmailAndPassword(auth, trimmedEmail, pass);
     const userEmail = cred.user.email?.toLowerCase() || '';
     const isDbAdmin = await checkIsAdmin(cred.user.uid, userEmail);
-    const isAuthorized = userEmail === ADMIN_EMAIL.toLowerCase() || isDbAdmin;
+    const isAuthorized = ADMIN_EMAILS.includes(userEmail) || isDbAdmin;
 
     if (!isAuthorized) {
       await signOut(auth);

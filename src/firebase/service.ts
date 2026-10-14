@@ -15,10 +15,10 @@ import { handleFirestoreError, OperationType } from './error';
 import { Question, SubjectItem, UserAttempt, QuizResult, BookmarkItem, FlashcardRatingItem, ImportHistoryItem } from '../types';
 import { SEED_QUESTIONS, DEMO_SAMPLE_QUESTIONS, INITIAL_SUBJECTS } from '../data/seedQuestions';
 
-const ADMIN_EMAIL = 'mohdfazalali1@gmail.com';
+const ADMIN_EMAILS = ['mohdfazalali1@gmail.com', 'fazalalicontribute@gmail.com'];
 
 export async function checkIsAdmin(userId: string, email?: string | null): Promise<boolean> {
-  if (email && email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+  if (email && ADMIN_EMAILS.includes(email.toLowerCase())) {
     return true;
   }
   if (!userId) return false;
