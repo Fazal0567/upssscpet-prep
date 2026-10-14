@@ -37,7 +37,7 @@ interface AdminDashboardProps {
   onDeleteAllQuestions?: () => Promise<void>;
   onClearAllDummyData?: () => Promise<void>;
   onSeedDemoQuestions?: () => Promise<void>;
-  onBatchImport: (validQuestions: Question[], fileName: string, onProgress: (p: number, t: number) => void) => Promise<void>;
+  onBatchImport: (validQuestions: Question[], fileName: string, onProgress: (p: number, t: number) => void) => Promise<any>;
   onRefreshData: () => Promise<void>;
 }
 
@@ -57,6 +57,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     user,
     profile,
     isAdmin,
+    loginWithGoogle,
     unlockAdminWithKey,
     lockAdmin,
     logout,
@@ -203,19 +204,58 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (!importResult || importResult.validQuestions.length === 0) return;
     setImporting(true);
     try {
-      await onBatchImport(
+      const res = await onBatchImport(
         importResult.validQuestions,
         fileName || 'questions_import.json',
         (curr, tot) => setProgress({ current: curr, total: tot })
       );
-      setImportSuccess(`Successfully imported ${importResult.validQuestions.length} questions into Cloud Firestore!`);
+      if (res?.mode === 'local') {
+        setImportSuccess(`Successfully imported ${importResult.validQuestions.length} questions! (Saved in local browser storage). Click 'Sync All to Cloud' to push to Cloud Firestore.`);
+      } else {
+        setImportSuccess(`🎉 Successfully imported and synced ${importResult.validQuestions.length} questions to Cloud Firestore! All students on all devices can now view and practice them.`);
+      }
       setImportResult(null);
       setFileName('');
       await onRefreshData();
     } catch (err: any) {
-      alert(`Import failed: ${err.message || 'Please check Firestore rules and network'}`);
+      alert(`Import error: ${err.message || 'Please check the file syntax'}`);
     } finally {
       setImporting(false);
+    }
+  };
+
+  // Sync all current bank questions to Cloud Firestore
+  const [syncingCloud, setSyncingCloud] = useState(false);
+  const [syncNotice, setSyncNotice] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
+
+  const handleSyncAllToCloud = async () => {
+    if (questions.length === 0) {
+      alert('No questions to sync. Please import or add questions first.');
+      return;
+    }
+    setSyncingCloud(true);
+    setSyncNotice(null);
+    try {
+      const res = await onBatchImport(questions, 'cloud_sync_manual.json', () => {});
+      if (res?.mode === 'cloud') {
+        setSyncNotice({
+          type: 'success',
+          msg: `🎉 Successfully synced all ${questions.length} questions to Cloud Firestore! All users on all devices can now view them.`
+        });
+      } else {
+        setSyncNotice({
+          type: 'error',
+          msg: `⚠️ Cloud write permission denied: ${res?.message || 'Check Firestore Rules'}. Please check that your email is authorized in Firestore Rules in Firebase Console.`
+        });
+      }
+      await onRefreshData();
+    } catch (e: any) {
+      setSyncNotice({
+        type: 'error',
+        msg: `Sync failed: ${e?.message || 'Network error'}`
+      });
+    } finally {
+      setSyncingCloud(false);
     }
   };
 
@@ -609,6 +649,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <span>Export Bank JSON ({questions.length})</span>
           </button>
           <button
+            onClick={handleSyncAllToCloud}
+            disabled={syncingCloud}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-xs transition shadow-lg shadow-emerald-600/30"
+            title="Sync all current questions to Cloud Firestore so all students see them"
+          >
+            <Database className={`w-4 h-4 ${syncingCloud ? 'animate-spin' : ''}`} />
+            <span>{syncingCloud ? 'Syncing...' : `Sync All to Cloud (${questions.length})`}</span>
+          </button>
+          <button
             onClick={() => {
               setEditingQuestion({
                 options_hi: ['', '', '', ''],
@@ -626,6 +675,63 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Storage & Sync Status Banner */}
+      {(!user && !profile?.email) ? (
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-950 animate-fade-in shadow-sm">
+          <div className="flex items-start sm:items-center gap-2.5">
+            <KeyRound className="w-5 h-5 text-amber-600 shrink-0 mt-0.5 sm:mt-0" />
+            <div>
+              <span className="font-bold text-amber-900">Admin Passkey Mode Active:</span> Questions you import or add work immediately across Mock Tests, Flashcards, and Practice.
+              <span className="block sm:inline sm:ml-1 text-[11px] text-amber-800">To sync directly to Cloud Firestore, sign in with your Google Admin account.</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await loginWithGoogle();
+              } catch (e: any) {
+                console.warn('Sign-in notice:', e);
+              }
+            }}
+            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shrink-0 flex items-center justify-center gap-1.5 shadow-sm transition"
+          >
+            <span>Sign in with Google to Sync Cloud</span>
+          </button>
+        </div>
+      ) : (
+        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-300 flex items-center justify-between text-xs text-emerald-950 animate-fade-in shadow-sm">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span><strong className="text-emerald-900">Admin Session Active:</strong> Logged in as {user?.email || profile?.email || profile?.displayName}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Sync Notice Alert */}
+      {syncNotice && (
+        <div className={`p-4 rounded-2xl text-xs flex items-start gap-2.5 animate-fade-in shadow-sm ${
+          syncNotice.type === 'success'
+            ? 'bg-emerald-50 border border-emerald-300 text-emerald-950'
+            : 'bg-amber-50 border border-amber-300 text-amber-950'
+        }`}>
+          {syncNotice.type === 'success' ? (
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+          ) : (
+            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          )}
+          <div className="flex-1">
+            <p className="font-semibold">{syncNotice.msg}</p>
+          </div>
+          <button
+            onClick={() => setSyncNotice(null)}
+            className="p-1 rounded-lg hover:bg-black/5 text-slate-500"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Metrics Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

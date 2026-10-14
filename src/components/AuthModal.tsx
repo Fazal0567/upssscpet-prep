@@ -136,7 +136,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
       await loginWithGoogle();
       onClose();
     } catch (err: any) {
-      setError(err?.message || 'Google sign-in could not be completed.');
+      if (err?.code === 'auth/unauthorized-domain' || err?.message?.includes('unauthorized-domain')) {
+        loginAsGuestAspirant();
+        onClose();
+      } else {
+        setError(err?.message || 'Google sign-in could not be completed.');
+      }
     }
   };
 

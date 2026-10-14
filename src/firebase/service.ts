@@ -30,56 +30,101 @@ export async function checkIsAdmin(userId: string, email?: string | null): Promi
   }
 }
 
-export async function fetchAllQuestions(): Promise<Question[]> {
-  const path = 'questions';
+const LOCAL_QUESTIONS_KEY = 'pet_local_imported_questions';
+const LOCAL_HISTORY_KEY = 'pet_local_import_history';
+
+function getStoredLocalQuestions(): Question[] {
   try {
-    const snap = await getDocs(collection(db, path));
-    if (snap.empty) {
-      return [];
-    }
-    const questions: Question[] = [];
-    snap.forEach(docSnap => {
-      questions.push(docSnap.data() as Question);
-    });
-    return questions;
-  } catch (error) {
-    console.warn('Failed to load questions from Firestore:', error);
+    const raw = localStorage.getItem(LOCAL_QUESTIONS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
     return [];
   }
 }
 
+function setStoredLocalQuestions(questions: Question[]): void {
+  try {
+    localStorage.setItem(LOCAL_QUESTIONS_KEY, JSON.stringify(questions));
+  } catch (e) {
+    console.warn('Failed to store questions in localStorage:', e);
+  }
+}
+
+function getStoredLocalHistory(): ImportHistoryItem[] {
+  try {
+    const raw = localStorage.getItem(LOCAL_HISTORY_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function appendStoredLocalHistory(item: ImportHistoryItem): void {
+  try {
+    const list = getStoredLocalHistory();
+    list.unshift(item);
+    localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(list.slice(0, 50)));
+  } catch {}
+}
+
+export async function fetchAllQuestions(): Promise<Question[]> {
+  const localQuestions = getStoredLocalQuestions();
+  try {
+    const snap = await getDocs(collection(db, 'questions'));
+    if (!snap.empty) {
+      const cloudQuestions: Question[] = [];
+      snap.forEach(docSnap => {
+        cloudQuestions.push(docSnap.data() as Question);
+      });
+      const map = new Map<string, Question>();
+      cloudQuestions.forEach(q => map.set(q.id, q));
+      localQuestions.forEach(q => map.set(q.id, q));
+      return Array.from(map.values());
+    }
+  } catch (error) {
+    console.warn('Failed to load questions from Firestore, using local fallback:', error);
+  }
+
+  // If Cloud Firestore had no questions or failed, merge seed + local
+  const map = new Map<string, Question>();
+  SEED_QUESTIONS.forEach(q => map.set(q.id, q));
+  localQuestions.forEach(q => map.set(q.id, q));
+  return Array.from(map.values());
+}
+
 /**
- * Delete all questions from Firestore (clears dummy or imported data)
+ * Delete all questions from Firestore & local storage (clears dummy or imported data)
  */
 export async function deleteAllQuestions(): Promise<number> {
-  const path = 'questions';
+  const local = getStoredLocalQuestions();
+  setStoredLocalQuestions([]);
   try {
-    const snap = await getDocs(collection(db, path));
-    if (snap.empty) return 0;
-    
-    let deletedCount = 0;
-    const docs = snap.docs;
-    const CHUNK_SIZE = 450;
-    for (let i = 0; i < docs.length; i += CHUNK_SIZE) {
-      const chunk = docs.slice(i, i + CHUNK_SIZE);
-      const batch = writeBatch(db);
-      chunk.forEach(d => {
-        batch.delete(d.ref);
-      });
-      await batch.commit();
-      deletedCount += chunk.length;
+    const snap = await getDocs(collection(db, 'questions'));
+    if (!snap.empty) {
+      const docs = snap.docs;
+      const CHUNK_SIZE = 450;
+      for (let i = 0; i < docs.length; i += CHUNK_SIZE) {
+        const chunk = docs.slice(i, i + CHUNK_SIZE);
+        const batch = writeBatch(db);
+        chunk.forEach(d => {
+          batch.delete(d.ref);
+        });
+        await batch.commit();
+      }
+      return docs.length;
     }
-    return deletedCount;
   } catch (error) {
-    console.warn('Error deleting all questions from Firestore:', error);
-    return 0;
+    console.warn('Error deleting all questions from Firestore (cleared locally):', error);
   }
+  return local.length;
 }
 
 /**
  * Clears all dummy data and resets question bank & logs
  */
 export async function clearAllDummyData(): Promise<{ questionsDeleted: number }> {
+  localStorage.removeItem(LOCAL_QUESTIONS_KEY);
+  localStorage.removeItem(LOCAL_HISTORY_KEY);
   const qCount = await deleteAllQuestions();
   try {
     const histSnap = await getDocs(collection(db, 'import_history'));
@@ -142,23 +187,34 @@ export async function fetchSubjects(): Promise<SubjectItem[]> {
 }
 
 export async function saveQuestion(question: Question): Promise<void> {
-  const path = `questions/${question.id}`;
+  // Always update local cache
+  const local = getStoredLocalQuestions();
+  const existingIdx = local.findIndex(q => q.id === question.id);
+  if (existingIdx !== -1) {
+    local[existingIdx] = question;
+  } else {
+    local.unshift(question);
+  }
+  setStoredLocalQuestions(local);
+
   try {
     await setDoc(doc(db, 'questions', question.id), {
       ...question,
       createdAt: question.createdAt || new Date().toISOString()
     });
   } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path);
+    console.warn('Could not write question to Firestore (saved locally):', error);
   }
 }
 
 export async function deleteQuestion(questionId: string): Promise<void> {
-  const path = `questions/${questionId}`;
+  const local = getStoredLocalQuestions().filter(q => q.id !== questionId);
+  setStoredLocalQuestions(local);
+
   try {
     await deleteDoc(doc(db, 'questions', questionId));
   } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
+    console.warn('Could not delete question from Firestore (removed locally):', error);
   }
 }
 
@@ -167,23 +223,15 @@ export async function batchImportQuestions(
   fileName: string,
   adminUid: string,
   onProgress?: (processed: number, total: number) => void
-): Promise<void> {
-  const CHUNK_SIZE = 250;
-  let processed = 0;
+): Promise<{ success: boolean; mode: 'cloud' | 'local'; count: number; message?: string }> {
+  // Always update local cache so user never loses data
+  const existingLocal = getStoredLocalQuestions();
+  const map = new Map<string, Question>();
+  existingLocal.forEach(q => map.set(q.id, q));
+  questions.forEach(q => map.set(q.id, q));
+  setStoredLocalQuestions(Array.from(map.values()));
 
-  for (let i = 0; i < questions.length; i += CHUNK_SIZE) {
-    const chunk = questions.slice(i, i + CHUNK_SIZE);
-    const batch = writeBatch(db);
-    chunk.forEach(q => {
-      const qRef = doc(db, 'questions', q.id);
-      batch.set(qRef, q);
-    });
-    await batch.commit();
-    processed += chunk.length;
-    if (onProgress) onProgress(processed, questions.length);
-  }
-
-  // Record import history
+  // Record import history locally
   const importId = `imp_${Date.now()}`;
   const importRecord: ImportHistoryItem = {
     id: importId,
@@ -195,22 +243,54 @@ export async function batchImportQuestions(
     importedAt: new Date().toISOString(),
     importedBy: adminUid
   };
+  appendStoredLocalHistory(importRecord);
+
+  // Try committing to Cloud Firestore
   try {
-    await setDoc(doc(db, 'import_history', importId), importRecord);
-  } catch (err) {
-    console.warn('Could not record import history:', err);
+    const CHUNK_SIZE = 250;
+    let processed = 0;
+
+    for (let i = 0; i < questions.length; i += CHUNK_SIZE) {
+      const chunk = questions.slice(i, i + CHUNK_SIZE);
+      const batch = writeBatch(db);
+      chunk.forEach(q => {
+        const qRef = doc(db, 'questions', q.id);
+        batch.set(qRef, q);
+      });
+      await batch.commit();
+      processed += chunk.length;
+      if (onProgress) onProgress(processed, questions.length);
+    }
+
+    try {
+      await setDoc(doc(db, 'import_history', importId), importRecord);
+    } catch {}
+
+    return { success: true, mode: 'cloud', count: questions.length };
+  } catch (err: any) {
+    console.warn('Firestore cloud write failed (permission or offline), data saved locally:', err);
+    if (onProgress) onProgress(questions.length, questions.length);
+    return {
+      success: true,
+      mode: 'local',
+      count: questions.length,
+      message: err?.message || 'Saved locally in browser storage'
+    };
   }
 }
 
 export async function fetchImportHistory(): Promise<ImportHistoryItem[]> {
-  const path = 'import_history';
+  const localHist = getStoredLocalHistory();
   try {
-    const snap = await getDocs(query(collection(db, path), orderBy('importedAt', 'desc'), limit(20)));
+    const snap = await getDocs(query(collection(db, 'import_history'), orderBy('importedAt', 'desc'), limit(20)));
     const history: ImportHistoryItem[] = [];
     snap.forEach(d => history.push(d.data() as ImportHistoryItem));
-    return history;
+    const map = new Map<string, ImportHistoryItem>();
+    history.forEach(h => map.set(h.id, h));
+    localHist.forEach(h => map.set(h.id, h));
+    return Array.from(map.values()).sort((a, b) => new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime());
   } catch {
-    return [];
+    return localHist;
   }
 }
 

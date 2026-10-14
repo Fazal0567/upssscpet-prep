@@ -202,11 +202,12 @@ function MainApp() {
     fName: string,
     onProgress: (p: number, t: number) => void
   ) => {
-    await batchImportQuestions(validQuestions, fName, user?.uid || 'admin', onProgress);
+    const res = await batchImportQuestions(validQuestions, fName, user?.uid || 'admin', onProgress);
     const updatedQuestions = await fetchAllQuestions();
     setQuestions(updatedQuestions);
     const updatedHistory = await fetchImportHistory();
     setImportHistory(updatedHistory);
+    return res;
   };
 
   const handleRefreshData = async () => {
